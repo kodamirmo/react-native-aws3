@@ -29,6 +29,13 @@ const setBodyAsParsedXML = (response) =>
     body: { postResponse: response.text == null ? null : extractResponseValues(response.text) }
   })
 
+const getUrl = (options) => {
+  if (options.awsCompatibleUrl) {
+    return `${options.awsCompatibleUrl}/${options.bucket}`;
+  }
+  return `https://${options.bucket}.${options.awsUrl || AWS_DEFAULT_S3_HOST}`;
+};
+
 export class RNS3 {
   static put(file, options) {
     options = {
@@ -37,8 +44,8 @@ export class RNS3 {
       date: new Date,
       contentType: file.type
     }
-
-    const url = `https://${options.bucket}.${options.awsUrl || AWS_DEFAULT_S3_HOST}`
+    
+    const url = getUrl(options);
     const method = "POST"
     const policy = S3Policy.generate(options)
 
